@@ -1,0 +1,17 @@
+schema_version = "1.0.0"
+id = "nodetree_hq_screenshot"
+version = "1.0.3"
+name = "Node Tree HQ Screenshot"
+tagline = "Export a clean HD screenshot or diagram of your node tree"
+maintainer = "Guillaume Bissieres"
+type = "add-on"
+website = "https://bissieres.gumroad.com"
+tracker_url = ""
+tags = ["Node", "Render"]
+blender_version_min = "4.2.0"
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+[permissions]
+files = "Saves node tree screenshots and diagrams to disk"
