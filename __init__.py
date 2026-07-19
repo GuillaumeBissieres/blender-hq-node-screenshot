@@ -482,12 +482,26 @@ class NODE_OT_hq_diagram_render(bpy.types.Operator):
                 draw_rounded_rect(sh,hx0,hy0,hx1,hy1,FRAME_HDR,r=6*scale)
 
             # --- Liens ---
+            ERROR_LINK_COLOR = (0.80, 0.08, 0.08, 0.95)
             for link in node_tree.links:
                 p0=socket_pos.get(link.from_socket)
                 p1=socket_pos.get(link.to_socket)
                 if p0 and p1:
-                    col=SOCKET_COLORS.get(link.from_socket.type,DEFAULT_SOCKET_COLOR)
-                    draw_line(sh,bezier_links(p0,p1),(col[0],col[1],col[2],0.9),link_w)
+                    is_err = not link.is_valid or link.is_muted
+                    col = ERROR_LINK_COLOR if is_err else SOCKET_COLORS.get(link.from_socket.type,DEFAULT_SOCKET_COLOR)
+                    pts = bezier_links(p0,p1)
+                    draw_line(sh,pts,(col[0],col[1],col[2],0.9),link_w)
+                    # Warning triangle on the link itself (at midpoint)
+                    if is_err and len(pts) >= 2:
+                        mid = pts[len(pts)//2]
+                        ts = max(10.0, scale * 8.0)
+                        tx, ty = mid[0] - ts*0.5, mid[1]
+                        tri = [(tx, ty - ts*0.55), (tx + ts, ty - ts*0.55), (tx + ts*0.5, ty + ts*0.55)]
+                        tb_ = batch_for_shader(sh,'TRIS',{"pos":tri},indices=[(0,1,2)])
+                        sh.uniform_float("color",(0.95,0.55,0.05,1.0)); tb_.draw(sh)
+                        # Exclamation mark
+                        ex = tx + ts*0.5 - ts*0.07
+                        draw_rect(sh, ex, ty-ts*0.28, ex+ts*0.14, ty+ts*0.22, (0.10,0.07,0.02,1.0))
 
             # --- Nodes ---
             for n in nodes:
@@ -502,6 +516,10 @@ class NODE_OT_hq_diagram_render(bpy.types.Operator):
                 draw_rounded_rect(sh,x0,y0,x1,y1,BODY_COLOR,r=5*scale)
                 hx0,hy0=tb(ax,ay-HEADER_H); hx1,hy1=tb(ax+w,ay)
                 draw_rounded_rect(sh,hx0,hy0,hx1,hy1,node_header_color(n),r=5*scale)
+
+                # Warning triangle for nodes with errors
+                if getattr(n, 'use_custom_color', False) is False:
+                    pass
 
                 y_cur=ay-HEADER_H
                 for r in rows:
