@@ -1,6 +1,9 @@
 # blender-hq-node-screenshot
 A Blender add-on to export a clean, high-quality screenshot or HD diagram of any node tree
 
+<img width="1200" height="600" alt="node_HQ" src="https://github.com/user-attachments/assets/87ca0ed7-33e4-4b5c-b87c-b3663e199639" />
+
+
 #
 Node Tree HQ Screenshot is a node editor utility that allows users to export their node trees as clean, high-resolution images — directly from the N panel with a single click. It works with all node editors in Blender: Geometry Nodes, Shader Editor, Compositor, and more.
 
